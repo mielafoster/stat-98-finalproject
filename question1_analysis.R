@@ -7,7 +7,7 @@ install.packages("dplyr")
 install.packages("ggplot2")
 library(ggplot2)
 library(plyr)
-netflix_data = read.csv("/Users/mielafoster/Desktop/netflix_us_final.csv")
+netflix_data = read.csv("/Users/mielafoster/Desktop/netflixUS_final.csv")
 View(netflix_data)
 
 #create the variables that I care about in the diversity data
@@ -96,12 +96,22 @@ View(sub_ethnic_mix)
 
 #Now we are going to observe the longitudinal data for each ethnic type of person
 #Recall the color code as we add histograms!
-hist(sub_white$date_added, col = "lightblue", breaks = 5, main = "Frequency of Ethnic Groups over Time", xlab = "Time")
-hist(sub_ethnic_mix$date_added, col = "brown", breaks = 10, add = T)
+hist(sub_white$date_added, col = "lightblue", breaks = 5, main = "Frequency of White Directors over Time", xlab = "Time")
+hist(sub_ethnic_mix$date_added, col = "brown", breaks = 5, main = "Frequency of Ethnic & White Directors over Time", xlab = "Time")
 hist(sub_latino$date_added, col = "red", breaks = 1,  add = T) 
 hist(sub_asian$date_added, col = "gold", breaks = 6 , add = T)
 hist(sub_middleeast$date_added, col = "blue", breaks = 10, add = T)
 hist(sub_black$date_added, col = "green", breaks = 1, add = T)
+
+#bar proportion plots of race
+ggplot(netflix_data ) +
+  aes(x = date_added, fill = factor(race)) +
+  geom_bar(position = "fill")
+
+#bar proportion plots by gender
+ggplot(netflix_data) +
+  aes(x = date_added, fill = factor(gender)) +
+  geom_bar(position = "fill")
 
 #Now we're going to subset the data by each gender ethnic group, or the ones that are most important!
 sub_white_female <- netflix_data[netflix_data$gender_num == 1 & netflix_data$race_num == 0, ]

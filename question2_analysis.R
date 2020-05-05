@@ -20,6 +20,8 @@ netflix.cor = cor(netflix_num, use = "pairwise.complete.obs")
 print(netflix.cor)
 corrplot(netflix.cor)
 
+mean(netflix.cor)
+
 #Let's see if we can extract correlation between each racial group and the other predictors we have
 
 
@@ -180,10 +182,20 @@ library(ggeffects)
 install.packages("ggiraphExtra")
 library(ggiraphExtra)
 
+imdb_model0 = lm(IMDB ~ gender_num + race_num + type_num + votes + date_added, data = netflix_num)
+summary(imdb_model0)
+model1 <- ggpredict(imdb_model0,se=TRUE, interactive=TRUE)
+plot(model1)
+
+tomato_model0 = lm(tomato ~ gender_num + race_num + type_num + votes + date_added, data = netflix_num)
+summary(tomato_model0)
+model1 <- ggpredict(tomato_model0,se=TRUE, interactive=TRUE)
+plot(model1)
+
 #These models are for the IMDB ratings
 
 #Model 1: This has interaction terms of gender date_added
-imdb_model1 = lm(IMDB ~ gender_num + race_num + type_num + votes + (gender_num*date_added), data = netflix_num)
+imdb_model1 = lm(IMDB ~ gender_num + race_num + type_num + votes + date_added + (gender_num*date_added), data = netflix_num)
 summary(imdb_model1)
 model1 <- ggpredict(imdb_model1,se=TRUE, interactive=TRUE)
 plot(model1)
@@ -191,7 +203,7 @@ ggplot(imdb_model1,aes(y=IMDB,x=date_added,color=factor(gender_num)))+geom_point
 
 
 #Model 2: This has interaction terms of  race and date_added
-imdb_model2 = lm(IMDB ~ gender_num + race_num + type_num + votes + (race_num*date_added), data = netflix_num)
+imdb_model2 = lm(IMDB ~ gender_num + race_num + type_num + votes + date_added +  (race_num*date_added), data = netflix_num)
 summary(imdb_model2)
 model2 <- ggpredict(imdb_model2,se=TRUE, interactive=TRUE)
 plot(model2)
@@ -203,7 +215,7 @@ anova(imdb_model1, imdb_model2)
 #These models are for Rotten Tomato ratings
 
 #Model 1: This has interaction terms of gender and race and gender and date_added
-tomato_model1 = lm(tomato ~ gender_num +race_num + type_num +(gender_num*date_added), data = netflix_num)
+tomato_model1 = lm(tomato ~ gender_num +race_num + type_num +date_added + (gender_num*date_added), data = netflix_num)
 summary(tomato_model1)
 model3 <- ggpredict(tomato_model1,se=TRUE, interactive=TRUE)
 plot(model3)
@@ -211,12 +223,18 @@ ggplot(tomato_model1,aes(y=tomato,x=date_added,color=factor(gender_num)))+geom_p
 
 
 #Model 2: This has interaction terms of gender and race  and race and date_added
-tomato_model2 = lm(tomato ~ gender_num + race_num + type_num +(race_num*date_added), data = netflix_num)
+tomato_model2 = lm(tomato ~ gender_num + race_num + type_num +date_added + (race_num*date_added), data = netflix_num)
 summary(tomato_model2)
 model4 <- ggpredict(tomato_model2,se=TRUE, interactive=TRUE)
 plot(model4)
 ggplot(tomato_model2,aes(y=tomato,x=date_added,color=factor(race_num)))+geom_point()+stat_smooth(method="lm",se=FALSE)
 
+
+#Mixed Effects
+mixed_tomato = lm(tomato ~ gender_num + race_num + type_num +date_added+ (race_num*date_added)+ (gender_num*date_added), data = netflix_num)
+summary(mixed_tomato)
+mixed_IMDB = lm(IMDB ~ gender_num + race_num + type_num + date_added + (race_num*date_added)+(gender_num*date_added), data = netflix_num)
+summary(mixed_IMDB)
 
 #Now let's compare these models
 anova(tomato_model1, tomato_model2)
